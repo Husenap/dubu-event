@@ -1,5 +1,5 @@
-![Windows](https://github.com/Husenap/cmake-project-template/workflows/Windows/badge.svg)
-![Ubuntu](https://github.com/Husenap/cmake-project-template/workflows/Ubuntu/badge.svg)
+![Windows](https://github.com/Husenap/dubu-event/workflows/Windows/badge.svg)
+![Ubuntu](https://github.com/Husenap/dubu-event/workflows/Ubuntu/badge.svg)
 
 ```
    _     _                           _   
