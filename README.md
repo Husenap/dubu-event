@@ -25,28 +25,60 @@ C++ Event Library
 #include <dubu_event/dubu_event.h>
 
 struct ResizeEvent {
-	int width;
-	int height;
+    int width;
+    int height;
 };
 
 class Window : public dubu::event::EventEmitter {
 public:
-	void Update() { Emit(ResizeEvent{.width = 800, .height = 600}); }
+    void Update() { Emit(ResizeEvent{.width = 800, .height = 600}); }
 };
 
 int main() {
-	Window window;
+    Window window;
 
-	{
-		auto token = window.Subscribe<ResizeEvent>([](const ResizeEvent& e) {
-			std::cout << "Window Resized: (" << e.width << ", " << e.height
-			          << ")" << std::endl;
-		});
+    {
+        auto token = window.Subscribe<ResizeEvent>([](const ResizeEvent& e) {
+            std::cout << "Window Resized: (" << e.width << ", " << e.height
+                      << ")" << std::endl;
+        });
 
-		window.Update();  // This call will trigger the callback
-	}
+        window.Update();  // This call will trigger the callback
+    }
 
-	window.Update();  // This call won't trigger the callback because the token
-	                  // has gone out of scope
+    window.Update();  // This call won't trigger the callback because the token
+                      // has gone out of scope
+}
+```
+
+##### **`Event Subscriber`**
+```cpp
+#include <iostream>
+
+#include <dubu_event/dubu_event.h>
+
+struct CustomEvent {};
+
+struct Foo : public dubu::event::EventEmitter {
+    void DoSomething() { Emit<CustomEvent>(); }
+};
+
+struct Bar : public dubu::event::EventSubscriber {
+    Bar(Foo& foo) {
+        Subscribe<CustomEvent>([&](const auto&) { ++counter; }, foo);
+    }
+
+    int counter = 0;
+};
+
+int main() {
+    Foo foo;
+    Bar bar(foo);
+
+    std::cout << bar.counter;  // 0
+
+    foo.DoSomething();
+
+    std::cout << bar.counter;  // 1
 }
 ```

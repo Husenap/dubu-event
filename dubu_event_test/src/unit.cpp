@@ -46,3 +46,37 @@ TEST(dubu_event, custom_event) {
 	foo.DoTheThing<int>();
 	EXPECT_EQ(counter, 2);
 }
+
+struct Bar : dubu::event::EventSubscriber {
+	Bar(Foo& foo, Foo& foo1) {
+		Subscribe<CustomEvent>([](const auto&) {}, foo);
+		Subscribe<int>([&](const int&) { ++counter; }, foo);
+		Subscribe<int>([&](const int&) { --counter; }, foo1);
+	}
+	int counter = 0;
+};
+
+TEST(dubu_event, event_subscriber) {
+	Foo foo;
+	Foo foo1;
+	Bar bar(foo, foo1);
+
+	EXPECT_EQ(bar.counter, 0);
+
+	foo.DoTheThing<int>();
+	foo.DoTheThing<CustomEvent>();
+	foo.DoTheThing<int>();
+	foo1.DoTheThing<int>();
+
+	EXPECT_EQ(bar.counter, 1);
+
+	foo.DoTheThing<int>();
+	foo.DoTheThing<CustomEvent>();
+	foo.DoTheThing<int>();
+
+	EXPECT_EQ(bar.counter, 3);
+
+	foo1.DoTheThing<int>();
+
+	EXPECT_EQ(bar.counter, 2);
+}

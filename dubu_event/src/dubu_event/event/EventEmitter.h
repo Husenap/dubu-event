@@ -2,18 +2,13 @@
 
 #include <functional>
 #include <map>
-#include <memory>
 #include <vector>
 
 #include <dubu_util/dubu_util.h>
 
+#include "Token.h"
+
 namespace dubu::event {
-
-namespace internal {
-struct _Token {};
-}  // namespace internal
-
-using Token = std::shared_ptr<internal::_Token>;
 
 class EventEmitter {
 private:
@@ -25,7 +20,8 @@ private:
 public:
 	template <typename EventType>
 	Token Subscribe(std::function<void(const EventType&)> callback) {
-		const dubu::util::IdType eventId = dubu::util::TypeId::Get<EventType>();
+		const dubu::util::IdType eventId =
+		    dubu::util::TypeId::Get<std::decay_t<EventType>>();
 
 		const auto cb = new std::function<void(const EventType&)>{
 		    [=](const EventType& event) { callback(event); }};
@@ -42,8 +38,13 @@ public:
 
 protected:
 	template <typename EventType>
+	void Emit() {
+		Emit(EventType{});
+	}
+	template <typename EventType>
 	void Emit(const EventType& event) {
-		const dubu::util::IdType eventId = dubu::util::TypeId::Get<EventType>();
+		const dubu::util::IdType eventId =
+		    dubu::util::TypeId::Get<std::decay_t<EventType>>();
 
 		auto it = mListeners.find(eventId);
 		if (it == mListeners.end()) {
@@ -58,7 +59,8 @@ protected:
 
 			if (entry.token.expired()) {
 				delete cb;
-				it->second.erase(it->second.begin() + i);
+				it->second.erase(it->second.begin() +
+				                 static_cast<std::ptrdiff_t>(i));
 				--i;
 				continue;
 			}
