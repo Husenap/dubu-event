@@ -60,7 +60,7 @@ protected:
 			if (entry.token.expired()) {
 				delete cb;
 				it->second.erase(it->second.begin() +
-				                 static_cast<ptrdiff_t>(i));
+				                 static_cast<std::ptrdiff_t>(i));
 				--i;
 				continue;
 			}
