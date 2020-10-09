@@ -4,6 +4,8 @@ set(src_precompiled
     "src/dubu_event/precompiled.h")
 
 set(src_event
+    "src/dubu_event/event/Token.h"
+    "src/dubu_event/event/EventSubscriber.h"
     "src/dubu_event/event/EventEmitter.cpp"
     "src/dubu_event/event/EventEmitter.h")
 
