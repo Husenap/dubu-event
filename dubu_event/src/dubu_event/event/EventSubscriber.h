@@ -18,7 +18,7 @@ protected:
 	template <typename EventType, typename EmitterType>
 	void Subscribe(std::function<void(const EventType&)> cb,
 	               EmitterType&                          emitter) {
-		tokens.push_back(emitter.Subscribe<EventType>(cb));
+		tokens.push_back(emitter.template Subscribe<EventType>(cb));
 	}
 
 private:
