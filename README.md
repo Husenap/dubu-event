@@ -50,3 +50,35 @@ int main() {
 	                  // has gone out of scope
 }
 ```
+
+##### **`Event Subscriber`**
+```cpp
+#include <iostream>
+
+#include <dubu_event/dubu_event.h>
+
+struct CustomEvent {};
+
+struct Foo : public dubu::event::EventEmitter {
+	void DoSomething() { Emit<CustomEvent>(); }
+};
+
+struct Bar : public dubu::event::EventSubscriber {
+	Bar(Foo& foo) {
+		Subscribe<CustomEvent>([&](const auto&) { ++counter; }, foo);
+	}
+
+	int counter = 0;
+};
+
+int main() {
+	Foo foo;
+	Bar bar(foo);
+
+	std::cout << bar.counter;  // 0
+
+	foo.DoSomething();
+
+	std::cout << bar.counter;  // 1
+}
+```
