@@ -59,7 +59,8 @@ protected:
 
 			if (entry.token.expired()) {
 				delete cb;
-				it->second.erase(it->second.begin() + i);
+				it->second.erase(it->second.begin() +
+				                 static_cast<ptrdiff_t>(i));
 				--i;
 				continue;
 			}
