@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 
+#include "EventEmitter.h"
 #include "Token.h"
 
 namespace dubu::event {
