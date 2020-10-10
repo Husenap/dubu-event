@@ -38,10 +38,11 @@ int main() {
     Window window;
 
     {
-        auto token = window.Subscribe<ResizeEvent>([](const ResizeEvent& e) {
-            std::cout << "Window Resized: (" << e.width << ", " << e.height
-                      << ")" << std::endl;
-        });
+        auto token =
+            window.RegisterListener<ResizeEvent>([](const ResizeEvent& e) {
+                std::cout << "Window Resized: (" << e.width << ", " << e.height
+                          << ")" << std::endl;
+            });
 
         window.Update();  // This call will trigger the callback
     }
