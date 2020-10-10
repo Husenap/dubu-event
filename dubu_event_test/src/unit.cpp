@@ -17,7 +17,7 @@ TEST(dubu_event, emitter) {
 	int counter = 0;
 
 	{
-		auto token = foo.Subscribe<int>([&](const int&) { ++counter; });
+		auto token = foo.RegisterListener<int>([&](const int&) { ++counter; });
 		foo.DoTheThing<int>();
 		foo.DoTheThing<int>();
 		EXPECT_EQ(counter, 2);
@@ -33,8 +33,8 @@ TEST(dubu_event, custom_event) {
 	int counter = 0;
 
 	{
-		auto token =
-		    foo.Subscribe<CustomEvent>([&](const CustomEvent&) { ++counter; });
+		auto token = foo.RegisterListener<CustomEvent>(
+		    [&](const CustomEvent&) { ++counter; });
 		foo.DoTheThing<CustomEvent>();
 		foo.DoTheThing<CustomEvent>();
 		foo.DoTheThing<int>();
@@ -79,4 +79,25 @@ TEST(dubu_event, event_subscriber) {
 	foo1.DoTheThing<int>();
 
 	EXPECT_EQ(bar.counter, 2);
+}
+
+struct Window : dubu::event::EventEmitter {
+	void Update() { Emit<CustomEvent>(); }
+};
+struct Input : dubu::event::EventEmitter, dubu::event::EventSubscriber {
+	Input(Window& window) {
+		Subscribe<CustomEvent>([&](const auto&) { ++counter; }, window);
+	}
+
+	int counter = 0;
+};
+
+TEST(dubu_event, event_emitter_subscriber) {
+	Window window;
+	Input  input(window);
+
+	window.Update();
+	window.Update();
+
+	EXPECT_EQ(input.counter, 2);
 }

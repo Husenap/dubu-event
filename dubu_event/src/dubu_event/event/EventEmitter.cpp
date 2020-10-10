@@ -2,7 +2,8 @@
 
 namespace dubu::event {
 
-void EventEmitter::Subscribe(dubu::util::IdType eventId, Listener listener) {
+void EventEmitter::RegisterListener(dubu::util::IdType eventId,
+                                    Listener           listener) {
 	if (mListeners.find(eventId) == mListeners.end()) {
 		mListeners.emplace(eventId, std::vector<Listener>());
 	}
