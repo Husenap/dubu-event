@@ -19,7 +19,8 @@ private:
 
 public:
 	template <typename EventType>
-	Token Subscribe(std::function<void(const EventType&)> callback) {
+	[[nodiscard]] Token RegisterListener(
+	    std::function<void(const EventType&)> callback) {
 		const dubu::util::IdType eventId =
 		    dubu::util::TypeId::Get<std::decay_t<EventType>>();
 
@@ -31,7 +32,7 @@ public:
 		const Listener listener{.callback = reinterpret_cast<void*>(cb),
 		                        .token    = token};
 
-		Subscribe(eventId, listener);
+		RegisterListener(eventId, listener);
 
 		return token;
 	}
@@ -70,7 +71,7 @@ protected:
 	}
 
 private:
-	void Subscribe(dubu::util::IdType eventId, Listener listener);
+	void RegisterListener(dubu::util::IdType eventId, Listener listener);
 
 	std::map<dubu::util::IdType, std::vector<Listener>> mListeners;
 };

@@ -16,9 +16,10 @@ public:
 
 protected:
 	template <typename EventType, typename EmitterType>
-	void Subscribe(std::function<void(const EventType&)> cb,
+	void Subscribe(std::function<void(const EventType&)> callback,
 	               EmitterType&                          emitter) {
-		tokens.push_back(emitter.template Subscribe<EventType>(cb));
+		tokens.push_back(
+		    emitter.template RegisterListener<EventType>(callback));
 	}
 
 private:
