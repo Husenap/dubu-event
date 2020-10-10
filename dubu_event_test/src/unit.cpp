@@ -86,18 +86,27 @@ struct Window : dubu::event::EventEmitter {
 };
 struct Input : dubu::event::EventEmitter, dubu::event::EventSubscriber {
 	Input(Window& window) {
-		Subscribe<CustomEvent>([&](const auto&) { ++counter; }, window);
+		Subscribe<CustomEvent>([this](const auto&) { Emit<CustomEvent>(); },
+		                       window);
 	}
-
-	int counter = 0;
 };
 
 TEST(dubu_event, event_emitter_subscriber) {
 	Window window;
 	Input  input(window);
 
+	int counter = 0;
+
+	{
+		auto token = input.RegisterListener<CustomEvent>(
+		    [&](const auto&) { ++counter; });
+
+		window.Update();
+		window.Update();
+	}
+
 	window.Update();
 	window.Update();
 
-	EXPECT_EQ(input.counter, 2);
+	EXPECT_EQ(counter, 2);
 }

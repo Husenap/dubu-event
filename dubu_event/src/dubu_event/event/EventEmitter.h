@@ -19,7 +19,8 @@ private:
 
 public:
 	template <typename EventType>
-	Token RegisterListener(std::function<void(const EventType&)> callback) {
+	[[nodiscard]] Token RegisterListener(
+	    std::function<void(const EventType&)> callback) {
 		const dubu::util::IdType eventId =
 		    dubu::util::TypeId::Get<std::decay_t<EventType>>();
 
